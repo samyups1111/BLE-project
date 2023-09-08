@@ -3,16 +3,15 @@ package com.sample.ble
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.compose.material3.Text
 import androidx.core.app.ActivityCompat
 import com.sample.ble.presentation.Navigation
 import com.sample.ble.ui.theme.BleTheme
@@ -26,6 +25,13 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var bluetoothAdapter: BluetoothAdapter
+    @Inject lateinit var bleScanner : BluetoothLeScanner
+    var isScanning = false
+        set(value) {
+            field = value
+            // Todo: change the buttons text
+            //runOnUiThread { scan_button.text = if (value) "Stop Scan" else "Start Scan" }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +57,6 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_CONNECT
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return
             }
             startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST_CODE)
@@ -104,7 +103,7 @@ class MainActivity : ComponentActivity() {
                     }
                     allGranted && hasRequiredRuntimePermissions() -> {
                         Log.d("sammy", "Look Andrea, it's working!!!")
-                        startBleScan(this)
+                        startBleScan()
                     }
                     else -> {
                         // Unexpected scenario encountered when handling permissions
@@ -115,6 +114,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    val scanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            super.onScanResult(callbackType, result)
+            with(result?.device) {
+                if (ActivityCompat.checkSelfPermission(
+                        this@MainActivity,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return
+                }
+                Log.i("ScanCallback", "Found BLE device! Name: ${this?.name ?: "Unnamed"}, address: ${this?.address}")
+            }
+        }
+    }
+
+
 
     companion object {
         const val ENABLE_BLUETOOTH_REQUEST_CODE = 1

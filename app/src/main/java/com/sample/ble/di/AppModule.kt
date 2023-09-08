@@ -22,4 +22,10 @@ object AppModule {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         return manager.adapter
     }
+
+    @Provides
+    @Singleton
+    fun provideBluetoothScanner(
+        adapter: BluetoothAdapter
+    ) = adapter.bluetoothLeScanner
 }

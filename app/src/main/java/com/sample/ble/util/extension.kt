@@ -3,6 +3,7 @@ package com.sample.ble.util
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -80,14 +81,51 @@ private fun requestBluetoothPermissions(activity: Activity) {
     }
 }
 
-fun startBleScan(context: Activity) {
+fun MainActivity.startBleScan() {
     Log.d("sammy", "startBleScan")
 
-    if (!context.hasRequiredRuntimePermissions()) {
+    if (!this.hasRequiredRuntimePermissions()) {
         Log.d("sammy", "does Not have required Runtime Permission")
-        context.requestRelevantRuntimePermissions()
+        this.requestRelevantRuntimePermissions()
     } else {
         Log.d("sammy", "YES it has required Runtime Permission")
-        /* TODO: Actually perform scan */
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        val scanSettings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)// short scan periods
+            .setMatchMode(ScanSettings.MATCH_MODE_STICKY) // only nearby devices
+            .build()
+        val context : Context = this // move to top?
+
+        // Todo: What's the Arduino UUID?
+//        val filter = ScanFilter.Builder().setServiceUuid(
+//            ParcelUuid.fromString("PLACEHOLDER_SERVICE_UUID.toString()")
+//        ).build()
+        bleScanner.startScan(null, scanSettings, scanCallback)
+        isScanning = true
     }
+}
+
+fun MainActivity.stopBleScan() {
+    if (ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.BLUETOOTH_SCAN
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        // TODO: Consider calling
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+        return
+    }
+    bleScanner.stopScan(scanCallback)
+    isScanning = false
 }
