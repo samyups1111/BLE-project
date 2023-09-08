@@ -39,7 +39,7 @@ fun Activity.requestRelevantRuntimePermissions() {
     }
 }
 
-private fun requestLocationPermission(activity: Activity) {
+fun requestLocationPermission(activity: Activity) {
     activity.runOnUiThread {
         val alert = AlertDialog.Builder(activity)
         alert.apply {
@@ -59,7 +59,7 @@ private fun requestLocationPermission(activity: Activity) {
 }
 
 @RequiresApi(Build.VERSION_CODES.S)
-private fun requestBluetoothPermissions(activity: Activity) {
+fun requestBluetoothPermissions(activity: Activity) {
     activity.runOnUiThread {
         val alert = AlertDialog.Builder(activity)
         alert.apply {
@@ -100,7 +100,6 @@ fun MainActivity.startBleScan() {
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)// short scan periods
             .setMatchMode(ScanSettings.MATCH_MODE_STICKY) // only nearby devices
             .build()
-        val context : Context = this // move to top?
 
         // Todo: What's the Arduino UUID?
 //        val filter = ScanFilter.Builder().setServiceUuid(

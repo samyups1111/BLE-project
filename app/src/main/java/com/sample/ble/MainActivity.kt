@@ -26,6 +26,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var bluetoothAdapter: BluetoothAdapter
     @Inject lateinit var bleScanner : BluetoothLeScanner
+    @Inject lateinit var scanCallback: ScanCallback
+
     var isScanning = false
         set(value) {
             field = value
@@ -114,24 +116,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    val scanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            super.onScanResult(callbackType, result)
-            with(result?.device) {
-                if (ActivityCompat.checkSelfPermission(
-                        this@MainActivity,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    return
-                }
-                Log.i("ScanCallback", "Found BLE device! Name: ${this?.name ?: "Unnamed"}, address: ${this?.address}")
-            }
-        }
-    }
-
-
 
     companion object {
         const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
