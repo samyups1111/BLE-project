@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sample.ble.MainActivity
 import com.sample.ble.util.startBleScan
@@ -19,11 +20,15 @@ import com.sample.ble.util.stopBleScan
 
 @Composable
 fun BluetoothRequestScreen(
-    vm: BluetoothRequestScreenViewModel = viewModel(),
+    vm: BluetoothRequestScreenViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current as MainActivity
     val scanResults = vm.scanResultsFlow.collectAsState()
+    Log.d("sammy", "bluetoothRequest ")
+    if (scanResults.value is UiState.Success) {
+        Log.d("sammy", "size in composable = ${(scanResults.value as UiState.Success).list}. id = ${scanResults.value.hashCode()}")
+    }
     Button(
         onClick = {
             if (context.isScanning) {
@@ -36,7 +41,32 @@ fun BluetoothRequestScreen(
         Text(
             text = "Start bluetooth scan"
         )
-        ScanResult(scanResults.value.scanResults)
+    }
+    if (scanResults.value is UiState.Success) {
+        ScanResult((scanResults.value as UiState.Success).list)
+    }
+    MockList(devices = listOf("sdf", "sdf", "sldjfl"))
+}
+
+@Composable
+private fun MockList(
+    devices: List<String>
+) {
+    LazyColumn {
+        items(devices) { result ->
+            Row() {
+                Text(
+                    //text = result.device.name ?: "Unnamed",
+                    text = "placeholder"
+                )
+                Text(
+                    text = result,
+                )
+                Text(
+                    text = "wlja")
+            }
+
+        }
     }
 }
 

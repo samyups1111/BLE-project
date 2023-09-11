@@ -20,7 +20,7 @@ class BluetoothRequestScreenViewModel @Inject constructor(): ViewModel() {
 //    private val _scanResultsFlow = MutableStateFlow<MutableList<ScanResult>>(mutableListOf())
 //    val scanResultsFlow = _scanResultsFlow.asStateFlow()
 
-    private val _scanResultsFlow = MutableStateFlow(BluetoothListState())
+    private val _scanResultsFlow = MutableStateFlow<UiState>(UiState.Loading)
     val scanResultsFlow = _scanResultsFlow.asStateFlow()
 
     fun setScanResults(newDevice: ScanResult?) {
@@ -36,14 +36,19 @@ class BluetoothRequestScreenViewModel @Inject constructor(): ViewModel() {
 //            _scanResultsFlow.value = scanListCopy
 //        }
 
-        _scanResultsFlow.update { currentState ->
-            currentState.scanResults.add(newDevice!!)
-            currentState.copy(
-                scanResults = currentState.scanResults
-            )
+//        _scanResultsFlow.update { currentState ->
+//            currentState.scanResults.add(newDevice!!)
+//            currentState.copy(
+//                scanResults = currentState.scanResults
+//            )
+        if (_scanResultsFlow.value is UiState.Success) {
+            Log.d("sammy", "flow size = ${(_scanResultsFlow.value as UiState.Success).list.size}")
 
         }
-    }
+        _scanResultsFlow.value = UiState.Success(listOf(newDevice!!))
+
+        }
+
 }
 
 
@@ -51,3 +56,8 @@ class BluetoothRequestScreenViewModel @Inject constructor(): ViewModel() {
 data class BluetoothListState(
     val scanResults: MutableList<ScanResult> = mutableListOf()
 )
+
+sealed class UiState() {
+    class Success(val list: List<ScanResult>): UiState()
+    object Loading: UiState()
+}
