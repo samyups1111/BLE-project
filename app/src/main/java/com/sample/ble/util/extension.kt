@@ -3,6 +3,7 @@ package com.sample.ble.util
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,6 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.sample.ble.MainActivity
 import com.sample.ble.MainActivity.Companion.RUNTIME_PERMISSION_REQUEST_CODE
+import com.sample.ble.R
+import java.util.UUID
 
 fun Context.hasPermission(permissionType: String): Boolean {
     return ContextCompat.checkSelfPermission(this, permissionType) ==
@@ -92,7 +95,7 @@ fun MainActivity.startBleScan() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         ) {
             return
         }
@@ -114,7 +117,7 @@ fun MainActivity.stopBleScan() {
     if (ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.BLUETOOTH_SCAN
-        ) != PackageManager.PERMISSION_GRANTED
+        ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     ) {
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions

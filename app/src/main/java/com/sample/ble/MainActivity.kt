@@ -3,15 +3,20 @@ package com.sample.ble
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.sample.ble.presentation.Navigation
 import com.sample.ble.ui.theme.BleTheme
@@ -19,6 +24,8 @@ import com.sample.ble.util.hasRequiredRuntimePermissions
 import com.sample.ble.util.requestRelevantRuntimePermissions
 import com.sample.ble.util.startBleScan
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -57,7 +64,7 @@ class MainActivity : ComponentActivity() {
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
+                ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             ) {
                 return
             }
@@ -122,3 +129,4 @@ class MainActivity : ComponentActivity() {
         const val RUNTIME_PERMISSION_REQUEST_CODE = 2
     }
 }
+
