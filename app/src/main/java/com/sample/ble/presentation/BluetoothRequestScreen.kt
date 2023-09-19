@@ -85,7 +85,6 @@ private fun ScanResult(
 ) {
     Log.d("sammy", "list =${devices.size}")
     var deviceName = "Unnamed"
-    // make sure this value updates at the right times
     val context = LocalContext.current as MainActivity
 
     LazyColumn {
@@ -107,7 +106,6 @@ private fun ScanResult(
                 }
                 Text(
                     text = deviceName,
-//                    text = "placeholder"
                     )
                 Text(
                     text = result.device.address ?: "No address",

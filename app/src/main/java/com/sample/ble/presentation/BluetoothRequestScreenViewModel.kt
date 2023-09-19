@@ -30,13 +30,9 @@ class BluetoothRequestScreenViewModel @Inject constructor(
     private val bluetoothServiceFactory: AppModule.BluetoothServiceFactory,
 ): ViewModel() {
 
-//    private val _scanResultsFlow = MutableStateFlow<MutableList<ScanResult>>(mutableListOf())
-//    val scanResultsFlow = _scanResultsFlow.asStateFlow()
-
     private val _scanResultsFlow = MutableStateFlow<UiState>(UiState.Loading)
     val scanResultsFlow = _scanResultsFlow.asStateFlow()
     private val allResults = mutableListOf<ScanResult>()
-    //private val bluetoothService
     var bluetoothGatt: BluetoothGatt? = null
 
     private val bluetoothGattCallback = object : BluetoothGattCallback() {
@@ -70,29 +66,9 @@ class BluetoothRequestScreenViewModel @Inject constructor(
             super.onServicesDiscovered(gatt, status)
         }
     }
-    private fun setupService(result: ScanResult): BluetoothService {
-        return bluetoothServiceFactory.create(result)
-    }
 
 
     fun addScanResults(newDevice: ScanResult?) {
-//        val scanListCopy = mutableListOf<ScanResult>()
-//        //scanListCopy.addAll(_scanResultsFlow.value)
-//        Log.d("sammy", "newDevice size = ${scanListCopy.size}")
-//
-//        if (newDevice != null) {
-//            Log.d("sammy", "newDevice address = ${newDevice.device.address}")
-//            _scanResultsFlow.value.add(newDevice)
-//            Log.d("sammy", "flow size = ${_scanResultsFlow.value.size}")
-//
-//            _scanResultsFlow.value = scanListCopy
-//        }
-
-//        _scanResultsFlow.update { currentState ->
-//            currentState.scanResults.add(newDevice!!)
-//            currentState.copy(
-//                scanResults = currentState.scanResults
-//            )
         if (_scanResultsFlow.value is UiState.Success) {
             Log.d("sammy", "flow size = ${(_scanResultsFlow.value as UiState.Success).list.size}")
 
@@ -113,59 +89,12 @@ class BluetoothRequestScreenViewModel @Inject constructor(
         allResults.clear()
     }
 
-
-
     fun connectGatt(result: ScanResult, _context: Context) {
         try {
             result.device.connectGatt(_context, false, bluetoothGattCallback)
         } catch (e: SecurityException) {
             Log.e("andrea", "SecurityException at connectGatt")
         }
-
-
-
-
-
-//        try {
-//            bluetoothGatt = result.device.connectGatt(context, false, bluetoothGattCallback)
-//        } catch (e: SecurityException) {
-//            Log.d("andrea", "security exception")
-//        }
-//        //
-//        viewModelScope.launch(Dispatchers.IO) {
-//            if (ActivityCompat.checkSelfPermission(
-//                    this@BluetoothRequestScreenViewModel.context,
-//                    Manifest.permission.BLUETOOTH_SCAN
-//                ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-//            ) {
-//                //
-//                return@launch
-//            }
-//            Looper.prepare()
-//            adapter.cancelDiscovery()
-
-
-
-
-//            setupService(result).setUpSocketAndWriteToStream(byteArrayOf())
-
-//            socket?.let { socket ->
-//                // Connect to the remote device through the socket. This call blocks
-//                // until it succeeds or throws an exception.
-//                socket.connect()
-//
-//                // The connection attempt succeeded. Perform work associated with
-//                // the connection in a separate thread.
-//                // PASS SOCKET HERE??
-//                setupService(result).writeToStream(byteArrayOf())
-//            }
-//            try{
-//                socket?.close()
-//            } catch (e: IOException) {
-//                Log.e("andrea", "couldn't close socket")
-//            }
-
-//        }
     }
 }
 

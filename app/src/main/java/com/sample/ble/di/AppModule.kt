@@ -52,7 +52,7 @@ object AppModule {
         val scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult?) {
                 super.onScanResult(callbackType, result)
-                with(result) { // .device?
+                with(result) {
                     if (ActivityCompat.checkSelfPermission(
                             context,
                             Manifest.permission.BLUETOOTH_CONNECT
@@ -86,41 +86,10 @@ object AppModule {
         bluetoothServiceFactory: BluetoothServiceFactory,
         ) = BluetoothRequestScreenViewModel(context, adapter, bluetoothServiceFactory)
 
-//    @Provides
-//    @Singleton
-//    fun provideBluetoothSocket(
-//        result: ScanResult,
-//        @ApplicationContext context: Context,
-//    ): BluetoothSocket? {
-//        if (ActivityCompat.checkSelfPermission(
-//                context,
-//                Manifest.permission.BLUETOOTH_CONNECT
-//            ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-//        ) {
-//            return null
-//        }
-//        return result.device.createRfcommSocketToServiceRecord(UUID.fromString(R.string.uuid.toString()))
-//    }
-
-//    @Provides
-//    @Singleton
-//    fun provideBluetoothService(
-//        handler: Handler,
-//        bluetoothSocket: BluetoothSocket?,
-//    ): BluetoothService {
-//        return BluetoothService(handler, bluetoothSocket)
-//    }
-
     @AssistedFactory
     interface BluetoothServiceFactory {
         fun create(result: ScanResult): BluetoothService
     }
-
-    /// bluetoothservice takes a handler and a socket
-    /// bluetoothsocket takes context and SCAN RESULT
-    /// scan result needs to be passed in at runtine
-    /// bluetooth socket is an android class, so pass scan result in and create the socket inside bluetooth service
-    /// then, make an AssistedInject constructor for BluetoothService and pass the scan results into that, annotated @Assist
 
     @Provides
     @Singleton
