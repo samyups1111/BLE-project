@@ -3,6 +3,8 @@ package com.sample.ble.util
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
@@ -125,3 +127,42 @@ fun MainActivity.stopBleScan() {
     bleScanner.stopScan(scanCallback)
     isScanning = false
 }
+
+fun BluetoothGatt.printGattTable() {
+    if (services.isEmpty()) {
+        Log.i("printGattTable", "No service and characteristic available, call discoverServices() first?")
+        return
+    }
+    services.forEach { service ->
+        val characteristicsTable = service.characteristics.joinToString(
+            separator = "\n|--",
+            prefix = "|--"
+        ) { it.uuid.toString() }
+        Log.i("printGattTable", "\nService ${service.uuid}\nCharacteristics:\n$characteristicsTable"
+        )
+    }
+}
+
+fun BluetoothGattCharacteristic.isReadable(): Boolean =
+    containsProperty(BluetoothGattCharacteristic.PROPERTY_READ)
+
+fun BluetoothGattCharacteristic.isWritable(): Boolean =
+    containsProperty(BluetoothGattCharacteristic.PROPERTY_WRITE)
+
+fun BluetoothGattCharacteristic.isWritableWithoutResponse(): Boolean =
+    containsProperty(BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)
+
+fun BluetoothGattCharacteristic.containsProperty(property: Int): Boolean {
+    return properties and property != 0
+}
+
+fun ByteArray.toHexString(): String =
+    joinToString(separator = " ", prefix = "0x") { String.format("%02X", it) }
+
+fun BluetoothGattCharacteristic.isIndicatable(): Boolean =
+    containsProperty(BluetoothGattCharacteristic.PROPERTY_INDICATE)
+
+fun BluetoothGattCharacteristic.isNotifiable(): Boolean =
+    containsProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+
+

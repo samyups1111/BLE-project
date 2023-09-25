@@ -30,6 +30,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    // TODO: handle all the permission checks and try/catches
 
     @Inject lateinit var bluetoothAdapter: BluetoothAdapter
     @Inject lateinit var bleScanner : BluetoothLeScanner
@@ -38,8 +39,6 @@ class MainActivity : ComponentActivity() {
     var isScanning = false
         set(value) {
             field = value
-            // Todo: change the buttons text
-            //runOnUiThread { scan_button.text = if (value) "Stop Scan" else "Start Scan" }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
